@@ -52,6 +52,13 @@ let soundEnabled = true;
 let audioContext = null;
 let bestScore = loadBestScore();
 let runBest = false;
+let selectedSkin = "blue";
+const skinColors = {
+    blue: "#32b9ff",
+    purple: "#b56bff",
+    green: "#52f59b",
+    red: "#ff5b6e"
+};
 
 function loadBestScore() {
     try {
@@ -141,6 +148,8 @@ function resetGame() {
     shieldTime = 0;
     magnetActive = false;
     magnetTime = 0;
+    doubleCoinsActive = false;
+    doubleCoinsTime = 0;
     powerUpTimer = 8;
 
     score = 0;
@@ -349,7 +358,17 @@ function spawnCoins() {
 }
 
 function spawnPowerUp() {
-    const type = Math.random() < 0.5 ? "shield" : "magnet";
+    const random = Math.random();
+
+    let type;
+
+    if (random < 0.34) {
+        type = "shield";
+    } else if (random < 0.67) {
+        type = "magnet";
+    } else {
+        type = "doubleCoins";
+    }
 
     powerUps.push({
         x: canvas.width + 40,
@@ -459,6 +478,14 @@ function update(dt) {
             magnetActive = false;
         }
     }
+    if (doubleCoinsActive) {
+        doubleCoinsTime -= dt;
+
+        if (doubleCoinsTime <= 0) {
+            doubleCoinsActive = false;
+            doubleCoinsTime = 0;
+        }
+    }
 
     for (const coin of coins) {
         coin.x -= speed * dt;
@@ -479,14 +506,17 @@ function update(dt) {
 
         if (Math.hypot(newDx, newDy) < 25) {
             coin.collected = true;
-            collectedCoins++;
-            totalCoins++;
+            const coinsEarned = doubleCoinsActive ? 2 : 1;
+
+            collectedCoins += coinsEarned;
+            totalCoins += coinsEarned;
+
             localStorage.setItem(
                 "neonRushTotalCoins",
                 totalCoins
             );
 
-            score += 10;
+            score += 10 * coinsEarned;
 
             addParticles(coin.x, coin.y, "#ffc95c", 9);
             sound(720 + Math.random() * 150, 0.08);
@@ -519,6 +549,16 @@ function update(dt) {
                     "#ff5de4",
                     14
                 );
+            } else if (powerUp.type === "doubleCoins") {
+                doubleCoinsActive = true;
+                doubleCoinsTime = 8;
+
+                addParticles(
+                    powerUp.x + powerUp.width / 2,
+                    powerUp.y + powerUp.height / 2,
+                    "#ffc95c",
+                    16
+                );
             }
 
             powerUp.collected = true;
@@ -543,50 +583,85 @@ function update(dt) {
     updateHUD();
 }
 
+
 function drawBackground(time) {
+    const cycle = Math.floor(distance / 300) % 3;
     const sky = ctx.createLinearGradient(0, 0, 0, H);
 
-    sky.addColorStop(0, "#0b1428");
-    sky.addColorStop(0.48, "#263657");
-    sky.addColorStop(0.76, "#76516b");
-    sky.addColorStop(1, "#121c31");
+    if (cycle === 0) {
+        sky.addColorStop(0, "#4aa8e8");
+        sky.addColorStop(0.48, "#a8dcf5");
+        sky.addColorStop(0.76, "#ffe0a3");
+        sky.addColorStop(1, "#f7b878");
+    } else if (cycle === 1) {
+        sky.addColorStop(0, "#45285f");
+        sky.addColorStop(0.48, "#b34f83");
+        sky.addColorStop(0.76, "#ff9c68");
+        sky.addColorStop(1, "#342447");
+    } else {
+        sky.addColorStop(0, "#0b1428");
+        sky.addColorStop(0.48, "#263657");
+        sky.addColorStop(0.76, "#76516b");
+        sky.addColorStop(1, "#121c31");
+    }
 
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, W, H);
 
+    const celestialX = W * 0.72;
+    const celestialY = 115;
+
     const glow = ctx.createRadialGradient(
-        W * 0.65, 170, 5,
-        W * 0.65, 170, 270
+        celestialX, celestialY, 5,
+        celestialX, celestialY, 240
     );
 
-    glow.addColorStop(0, "#ffb87c55");
-    glow.addColorStop(1, "#ffb87c00");
+    if (cycle === 0) {
+        glow.addColorStop(0, "#fff2a855");
+        glow.addColorStop(1, "#fff2a800");
+    } else if (cycle === 1) {
+        glow.addColorStop(0, "#ff8a9e66");
+        glow.addColorStop(1, "#ff8a9e00");
+    } else {
+        glow.addColorStop(0, "#ffb87c44");
+        glow.addColorStop(1, "#ffb87c00");
+    }
 
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, W, H);
 
-    ctx.fillStyle = "#ffd8a0";
-    ctx.globalAlpha = 0.85;
+    ctx.fillStyle = cycle === 0
+        ? "#fff3a3"
+        : cycle === 1
+            ? "#ffbd91"
+            : "#e2eaff";
+
     ctx.beginPath();
-    ctx.arc(W * 0.65, 170, 37, 0, Math.PI * 2);
+    ctx.arc(celestialX, celestialY, 30, 0, Math.PI * 2);
     ctx.fill();
-    ctx.globalAlpha = 1;
 
-    for (let i = 0; i < 48; i++) {
-        const x = (i * 197 + 31) % W;
-        const y = (i * 73 + 17) % 180;
+    if (cycle === 2) {
+        for (let i = 0; i < 48; i++) {
+            const x = (i * 197 + 31) % W;
+            const y = (i * 73 + 17) % Math.max(1, GROUND - 100);
 
-        ctx.fillStyle = i % 2 ? "#ffffff77" : "#8bdcff77";
-        ctx.fillRect(x, y, 2, 2);
+            ctx.fillStyle = i % 2 ? "#ffffffaa" : "#8bdcffaa";
+            ctx.fillRect(x, y, 2, 2);
+        }
     }
 
     for (const b of buildings) {
         const y = GROUND - b.height;
 
-        ctx.fillStyle = "#111c32";
+        ctx.fillStyle = cycle === 0
+            ? "#3a6580"
+            : cycle === 1
+                ? "#302440"
+                : "#111c32";
+
         ctx.fillRect(b.x, y, b.width, b.height);
 
-        ctx.fillStyle = "#273653";
+        ctx.fillStyle = cycle === 0 ? "#54839a" : "#273653";
         ctx.fillRect(b.x + 4, y + 5, 2, b.height - 5);
 
         for (let wy = y + 12; wy < GROUND - 12; wy += 18) {
@@ -595,9 +670,13 @@ function drawBackground(time) {
                     Math.sin(wx * 3 + wy * 7 + b.seed * 30) > 0.1;
 
                 if (lit) {
-                    ctx.fillStyle = b.windows;
-                    ctx.globalAlpha =
-                        0.35 + (Math.sin(wx + wy) + 1) * 0.2;
+                    ctx.fillStyle = cycle === 0
+                        ? "#fff0a0"
+                        : b.windows;
+
+                    ctx.globalAlpha = cycle === 0
+                        ? 0.25
+                        : 0.35 + (Math.sin(wx + wy) + 1) * 0.2;
 
                     ctx.fillRect(wx, wy, 4, 7);
                     ctx.globalAlpha = 1;
@@ -610,18 +689,24 @@ function drawBackground(time) {
         0, GROUND - 30, 0, GROUND + 20
     );
 
-    horizon.addColorStop(0, "#32b9ff00");
-    horizon.addColorStop(1, "#32b9ff20");
+    horizon.addColorStop(
+        0,
+        cycle === 0 ? "#ffffff00" : "#32b9ff00"
+    );
+    horizon.addColorStop(
+        1,
+        cycle === 0 ? "#ffffff25" : "#32b9ff20"
+    );
 
     ctx.fillStyle = horizon;
     ctx.fillRect(0, GROUND - 30, W, 50);
 
-    ctx.fillStyle = "#111c30";
+    ctx.fillStyle = cycle === 0 ? "#25485b" : "#111c30";
     ctx.fillRect(0, GROUND, W, H - GROUND);
 
-    ctx.strokeStyle = "#32b9ff";
+    ctx.strokeStyle = cycle === 0 ? "#b7f0ff" : "#32b9ff";
     ctx.lineWidth = 2;
-    ctx.shadowColor = "#32b9ff";
+    ctx.shadowColor = ctx.strokeStyle;
     ctx.shadowBlur = 13;
 
     ctx.beginPath();
@@ -636,7 +721,7 @@ function drawBackground(time) {
             ((i * 110 - time * speed * 0.65) % (W + 110) + W + 110) %
             (W + 110);
 
-        ctx.fillStyle = "#a8dfff77";
+        ctx.fillStyle = cycle === 0 ? "#ffffff88" : "#a8dfff77";
         ctx.fillRect(x, GROUND + 33, 48, 3);
     }
 }
@@ -646,13 +731,14 @@ function drawRunner() {
     const bob = p.grounded ? Math.sin(p.runPhase) * 2 : 0;
     const x = p.x;
     const y = p.y + bob;
+    const skinColor = skinColors[selectedSkin] || skinColors.blue;
 
     ctx.save();
     ctx.translate(x + p.width / 2, y);
 
-    ctx.shadowColor = "#32b9ff";
+    ctx.shadowColor = skinColor;
     ctx.shadowBlur = 13;
-    ctx.strokeStyle = "#32b9ff";
+    ctx.strokeStyle = skinColor;
     ctx.lineWidth = 7;
     ctx.lineCap = "round";
 
@@ -773,6 +859,7 @@ function drawCoin(coin, time) {
 }
 
 
+
 function drawPowerUp(powerUp) {
     const centerX = powerUp.x + powerUp.width / 2;
     const centerY = powerUp.y + powerUp.height / 2;
@@ -788,32 +875,35 @@ function drawPowerUp(powerUp) {
         ctx.shadowColor = "#32b9ff";
         ctx.strokeStyle = "#32b9ff";
         ctx.fillStyle = "#153b60";
-
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 20px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("S", centerX, centerY);
-    } else {
+    } else if (powerUp.type === "magnet") {
         ctx.shadowColor = "#ff5de4";
         ctx.strokeStyle = "#ff5de4";
         ctx.fillStyle = "#54214f";
+    } else {
+        ctx.shadowColor = "#ffc95c";
+        ctx.strokeStyle = "#ffc95c";
+        ctx.fillStyle = "#60451a";
+    }
 
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
 
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 20px Arial";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+    ctx.fillStyle = "#ffffff";
+    ctx.font = powerUp.type === "doubleCoins"
+        ? "bold 13px Arial"
+        : "bold 20px Arial";
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    if (powerUp.type === "shield") {
+        ctx.fillText("S", centerX, centerY);
+    } else if (powerUp.type === "magnet") {
         ctx.fillText("M", centerX, centerY);
+    } else {
+        ctx.fillText("2×", centerX, centerY);
     }
 
     ctx.restore();
