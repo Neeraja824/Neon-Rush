@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d19">
+  <title>Neon Rush | Endless Runner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="site">
+    <header class="navbar">
+      <a href="#" class="brand">
+        <span class="brand-icon">ϟ</span>
+        NEON <span>RUSH</span>
+      </a>
+
+      <div class="nav-status">
+        <span class="status-dot"></span>
+        ARCADE MODE
+      </div>
+
+      <button id="soundBtn" class="icon-btn" aria-label="Toggle sound">♫ Sound On</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow"><span></span> THE CITY NEVER SLEEPS</span>
+          <h1>RUN THE<br><span>NIGHT.</span></h1>
+          <p class="hero-description">
+            Enter the neon streets. Dodge every obstacle, collect coins
+            and push your limits. How far can you run?
+          </p>
+
+          <button id="startBtn" class="primary-btn">
+            <span class="play-icon">▶</span>
+            <span id="startLabel">START RUN</span>
+            <span class="button-arrow">↗</span>
+          </button>
+
+          <div class="hero-note">
+            <span class="live-dot"></span>
+            YOUR NEXT RECORD STARTS HERE
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="sun"></div>
+          <div class="city city-back"></div>
+          <div class="city city-front"></div>
+          <div class="hero-road"></div>
+          <div class="hero-lane"></div>
+          <div class="hero-runner">
+            <div class="runner-head"></div>
+            <div class="runner-body"></div>
+            <div class="runner-arm arm-one"></div>
+            <div class="runner-arm arm-two"></div>
+            <div class="runner-leg leg-one"></div>
+            <div class="runner-leg leg-two"></div>
+          </div>
+          <div class="hero-coin coin-one">$</div>
+          <div class="hero-coin coin-two">$</div>
+          <div class="hero-coin coin-three">$</div>
+          <div class="visual-label">NIGHT CITY <span>•</span> SECTOR 01</div>
+        </div>
+      </section>
+
+      <section class="dashboard">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">YOUR PERFORMANCE</p>
+            <h2>Runner's Dashboard</h2>
+          </div>
+          <span class="saved-label"><span>✓</span> BEST SCORE SAVED</span>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card current-card">
+            <div class="stat-top">
+              <span class="stat-label">CURRENT SCORE</span>
+              <span class="stat-icon blue">✦</span>
+            </div>
+            <strong id="score">0</strong>
+            <p>Points this run</p>
+          </article>
+
+          <article class="stat-card best-card">
+            <div class="stat-top">
+              <span class="stat-label">PERSONAL BEST</span>
+              <span class="stat-icon gold">♛</span>
+            </div>
+            <strong id="best">0</strong>
+            <p id="bestMessage">Your next record awaits</p>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">COINS COLLECTED</span>
+              <span class="stat-icon gold">◉</span>
+            </div>
+            <strong id="coins">0</strong>
+            <p>10 bonus points per coin</p>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">DISTANCE</span>
+              <span class="stat-icon purple">⌁</span>
+            </div>
+            <strong><span id="distance">0</span><small> m</small></strong>
+            <p id="speedText">Speed: 1.0x</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="play-section" id="play">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ENTER THE STREETS</p>
+            <h2>Ready, Runner?</h2>
+          </div>
+          <span class="game-tag">ENDLESS RUNNER</span>
+        </div>
+
+        <div class="game-card">
+          <div class="game-toolbar">
+            <div class="game-location">
+              <span class="live-dot"></span>
+              NIGHT CITY <span class="separator">/</span> SECTOR 01
+            </div>
+            <button id="pauseBtn" class="secondary-btn" disabled>Ⅱ Pause</button>
+          </div>
+
+          <div class="game-stage">
+            <canvas id="gameCanvas" aria-label="Neon Rush game. Jump over obstacles and collect coins."></canvas>
+
+            <div id="overlay" class="game-overlay">
+              <div class="overlay-panel">
+                <div id="overlayIcon" class="overlay-icon">ϟ</div>
+                <p class="eyebrow" id="overlayEyebrow">YOUR ADVENTURE BEGINS</p>
+                <h3 id="overlayTitle">READY TO <span>RUSH?</span></h3>
+                <p id="overlayText">Jump over obstacles and collect coins to build your score.</p>
+                <button id="overlayBtn" class="primary-btn">
+                  <span id="overlayBtnLabel">START GAME</span>
+                  <span>→</span>
+                </button>
+                <p class="overlay-hint">SPACE / ↑ TO JUMP · TAP TO PLAY</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="game-controls">
+            <div><span class="key">SPACE</span><span>Jump</span></div>
+            <div><span class="key">P</span><span>Pause / Resume</span></div>
+            <div><span class="key">↗</span><span>Collect gold coins</span></div>
+          </div>
+
+          <div id="newRecord" class="record-message" hidden>
+            ♛ New personal best! Your record has been saved.
+          </div>
+        </div>
+      </section>
+
+      <section class="features">
+        <article class="feature-card">
+          <span class="feature-icon">✧</span>
+          <h3>Beat Your Record</h3>
+          <p>Every run counts. Your personal best stays saved when you return.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon gold">◉</span>
+          <h3>Collect Rewards</h3>
+          <p>Grab gold coins along the road to earn bonus points.</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-icon purple">↗</span>
+          <h3>Go Further</h3>
+          <p>The longer you survive, the faster and more challenging it gets.</p>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a href="#" class="brand footer-brand">NEON <span>RUSH</span></a>
+      <p>Built for the thrill of the run.</p>
+      <span>© 2026 NEON RUSH</span>
+    </footer>
+  </div>
+</body>
+</html>
