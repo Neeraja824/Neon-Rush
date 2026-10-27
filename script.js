@@ -60,6 +60,93 @@ const skinColors = {
     red: "#ff5b6e"
 };
 
+
+let unlockedSkins = JSON.parse(
+    localStorage.getItem("neonRushUnlockedSkins") || '["blue"]'
+);
+
+selectedSkin = localStorage.getItem("neonRushSelectedSkin") || "blue";
+
+if (!unlockedSkins.includes("blue")) {
+    unlockedSkins.push("blue");
+}
+
+if (!skinColors[selectedSkin] || !unlockedSkins.includes(selectedSkin)) {
+    selectedSkin = "blue";
+}
+
+function saveSkinSettings() {
+    localStorage.setItem(
+        "neonRushUnlockedSkins",
+        JSON.stringify(unlockedSkins)
+    );
+
+    localStorage.setItem("neonRushSelectedSkin", selectedSkin);
+}
+
+function updateSkinShop() {
+    document.querySelectorAll(".skin-card").forEach((card) => {
+        const button = card.querySelector(".skin-button");
+        const skinName = button.getAttribute("onclick").match(/'(blue|purple|green|red)'/)[1];
+
+        if (unlockedSkins.includes(skinName)) {
+            button.textContent = selectedSkin === skinName ? "Selected ✓" : "Select";
+        } else {
+            button.textContent = "Unlock";
+        }
+
+        button.disabled = selectedSkin === skinName;
+    });
+}
+
+function selectSkin(skinName) {
+    const message = document.getElementById("skin-message");
+
+    if (!skinColors[skinName]) return;
+
+    if (!unlockedSkins.includes(skinName)) {
+        message.textContent = "First unlock this skin!";
+        return;
+    }
+
+    selectedSkin = skinName;
+    saveSkinSettings();
+    updateSkinShop();
+
+    message.textContent = skinName.charAt(0).toUpperCase() + skinName.slice(1) + " skin selected!";
+}
+
+function buySkin(skinName, price) {
+    const message = document.getElementById("skin-message");
+
+    if (!skinColors[skinName]) return;
+
+    if (unlockedSkins.includes(skinName)) {
+        selectSkin(skinName);
+        return;
+    }
+
+    if (totalCoins < price) {
+        message.textContent = "Not enough coins! Collect more coins while running.";
+        return;
+    }
+
+    totalCoins -= price;
+    localStorage.setItem("neonRushTotalCoins", totalCoins);
+
+    unlockedSkins.push(skinName);
+    selectedSkin = skinName;
+
+    saveSkinSettings();
+    updateHUD();
+    updateSkinShop();
+
+    message.textContent = skinName.charAt(0).toUpperCase() + skinName.slice(1) + " skin unlocked!";
+}
+
+updateSkinShop();
+
+
 function loadBestScore() {
     try {
         return Math.max(
@@ -726,6 +813,7 @@ function drawBackground(time) {
     }
 }
 
+
 function drawRunner() {
     const p = player;
     const bob = p.grounded ? Math.sin(p.runPhase) * 2 : 0;
@@ -759,10 +847,11 @@ function drawRunner() {
     ctx.stroke();
 
     ctx.shadowBlur = 0;
+
     ctx.fillStyle = "#102844";
     ctx.fillRect(-12, 20, 24, 27);
 
-    ctx.fillStyle = "#32b9ff";
+    ctx.fillStyle = skinColor;
     ctx.fillRect(-10, 20, 20, 24);
 
     ctx.fillStyle = "#ffffff";
@@ -770,7 +859,7 @@ function drawRunner() {
     ctx.textAlign = "center";
     ctx.fillText("ϟ", 0, 38);
 
-    ctx.strokeStyle = "#32b9ff";
+    ctx.strokeStyle = skinColor;
     ctx.lineWidth = 6;
 
     ctx.beginPath();
@@ -783,7 +872,7 @@ function drawRunner() {
     ctx.lineTo(15, 32);
     ctx.stroke();
 
-    ctx.fillStyle = "#d9a782";
+    ctx.fillStyle = skinColor;
     ctx.beginPath();
     ctx.arc(0, 12, 11, 0, Math.PI * 2);
     ctx.fill();
@@ -799,6 +888,7 @@ function drawRunner() {
 
     ctx.restore();
 }
+
 
 function drawObstacle(o) {
     ctx.save();

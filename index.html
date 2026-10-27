@@ -6,9 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080d19">
   <title>Neon Rush | Endless Runner</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
@@ -33,6 +35,7 @@
         <div class="hero-copy">
           <span class="eyebrow"><span></span> THE CITY NEVER SLEEPS</span>
           <h1>RUN THE<br><span>NIGHT.</span></h1>
+
           <p class="hero-description">
             Enter the neon streets. Dodge every obstacle, collect coins
             and push your limits. How far can you run?
@@ -56,6 +59,7 @@
           <div class="city city-front"></div>
           <div class="hero-road"></div>
           <div class="hero-lane"></div>
+
           <div class="hero-runner">
             <div class="runner-head"></div>
             <div class="runner-body"></div>
@@ -64,6 +68,7 @@
             <div class="runner-leg leg-one"></div>
             <div class="runner-leg leg-two"></div>
           </div>
+
           <div class="hero-coin coin-one">$</div>
           <div class="hero-coin coin-two">$</div>
           <div class="hero-coin coin-three">$</div>
@@ -155,10 +160,12 @@
                 <p class="eyebrow" id="overlayEyebrow">YOUR ADVENTURE BEGINS</p>
                 <h3 id="overlayTitle">READY TO <span>RUSH?</span></h3>
                 <p id="overlayText">Jump over obstacles and collect coins to build your score.</p>
+
                 <button id="overlayBtn" class="primary-btn">
                   <span id="overlayBtnLabel">START GAME</span>
                   <span>→</span>
                 </button>
+
                 <p class="overlay-hint">SPACE / ↑ TO JUMP · TAP TO PLAY</p>
               </div>
             </div>
@@ -176,17 +183,74 @@
         </div>
       </section>
 
+      <!-- CHARACTER SKIN SHOP -->
+      <section id="skin-shop" class="skin-shop">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">CUSTOMIZE YOUR RUNNER</p>
+            <h2>Character Skin Shop</h2>
+          </div>
+          <span class="game-tag">UNLOCK SKINS</span>
+        </div>
+
+        <p class="skin-shop-description">
+          Collect coins during your runs and unlock new character colors.
+        </p>
+
+        <div class="skin-list">
+          <article class="skin-card">
+            <div class="skin-preview skin-blue"></div>
+            <h3>Neon Blue</h3>
+            <p>Free</p>
+            <button type="button" class="skin-button" onclick="selectSkin('blue')">
+              Select
+            </button>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-preview skin-purple"></div>
+            <h3>Cyber Purple</h3>
+            <p>100 Coins</p>
+            <button type="button" class="skin-button" onclick="buySkin('purple', 100)">
+              Unlock
+            </button>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-preview skin-green"></div>
+            <h3>Neon Green</h3>
+            <p>200 Coins</p>
+            <button type="button" class="skin-button" onclick="buySkin('green', 200)">
+              Unlock
+            </button>
+          </article>
+
+          <article class="skin-card">
+            <div class="skin-preview skin-red"></div>
+            <h3>Laser Red</h3>
+            <p>300 Coins</p>
+            <button type="button" class="skin-button" onclick="buySkin('red', 300)">
+              Unlock
+            </button>
+          </article>
+        </div>
+
+        <p id="skin-message" class="skin-message" role="status" aria-live="polite"></p>
+      </section>
+
       <section class="features">
         <article class="feature-card">
           <span class="feature-icon">✧</span>
           <h3>Beat Your Record</h3>
           <p>Every run counts. Your personal best stays saved when you return.</p>
         </article>
+
         <article class="feature-card">
           <span class="feature-icon gold">◉</span>
           <h3>Collect Rewards</h3>
           <p>Grab gold coins along the road to earn bonus points.</p>
         </article>
+
         <article class="feature-card">
           <span class="feature-icon purple">↗</span>
           <h3>Go Further</h3>
