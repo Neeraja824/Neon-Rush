@@ -133,6 +133,44 @@
         </div>
       </section>
 
+      <!-- CHARACTER SELECTION -->
+      <section class="character-section" id="character-selection">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">CHOOSE YOUR RUNNER</p>
+            <h2>Select Your Character</h2>
+          </div>
+          <span class="game-tag">2 CHARACTERS</span>
+        </div>
+
+        <div class="character-options">
+          <button
+            type="button"
+            class="character-option selected"
+            data-character="boy"
+            aria-pressed="true">
+            <span class="character-emoji" aria-hidden="true">🧑🏻‍🚀</span>
+            <strong>Neon Boy</strong>
+            <span>Agile Runner</span>
+          </button>
+
+          <button
+            type="button"
+            class="character-option"
+            data-character="girl"
+            aria-pressed="false">
+            <span class="character-emoji" aria-hidden="true">👩🏻‍🚀</span>
+            <strong>Neon Girl</strong>
+            <span>Street Runner</span>
+          </button>
+        </div>
+
+        <p id="character-message" role="status" aria-live="polite">
+          Neon Boy selected
+        </p>
+      </section>
+
+      <!-- GAME -->
       <section class="play-section" id="play">
         <div class="section-heading">
           <div>
@@ -238,6 +276,7 @@
         <p id="skin-message" class="skin-message" role="status" aria-live="polite"></p>
       </section>
 
+      <!-- FEATURES -->
       <section class="features">
         <article class="feature-card">
           <span class="feature-icon">✧</span>

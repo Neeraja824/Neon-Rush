@@ -53,6 +53,8 @@ let audioContext = null;
 let bestScore = loadBestScore();
 let runBest = false;
 let selectedSkin = "blue";
+let selectedCharacter =
+    localStorage.getItem("neonRushCharacter") || "boy";
 const skinColors = {
     blue: "#32b9ff",
     purple: "#b56bff",
@@ -1139,3 +1141,34 @@ requestAnimationFrame(time => {
     lastTime = time;
     gameLoop(time);
 });
+
+function updateCharacterSelection() {
+    document.querySelectorAll(".character-option").forEach((button) => {
+        const isSelected =
+            button.dataset.character === selectedCharacter;
+
+        button.classList.toggle("selected", isSelected);
+        button.setAttribute("aria-pressed", String(isSelected));
+    });
+
+    const message = document.getElementById("character-message");
+
+    if (message) {
+        message.textContent =
+            selectedCharacter === "girl"
+                ? "Neon Girl selected!"
+                : "Neon Boy selected!";
+    }
+}
+
+document.querySelectorAll(".character-option").forEach((button) => {
+    button.addEventListener("click", () => {
+        selectedCharacter = button.dataset.character;
+
+        localStorage.setItem("neonRushCharacter", selectedCharacter);
+
+        updateCharacterSelection();
+    });
+});
+
+updateCharacterSelection();
